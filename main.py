@@ -6,7 +6,7 @@ from random import randint
 from flask import Flask, redirect, session, url_for, request
 from werkzeug.utils import html
 
-import dbm as db
+import db
 
 app = Flask(__name__, static_folder='static')
 
@@ -26,8 +26,11 @@ app.config['SECRET_KEY'] = key
 ABC = """1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM"""
 TEXTABC = {
     "vowels": "aeyui",
-    "consonants":"dfnlcbxn"
+    "consonants":"dfnlkbn"
 }
+
+TITLE_PLACEHOLDER = ""
+
 def session_gen():
     session = ""
     for _ in range(16):
@@ -36,7 +39,8 @@ def session_gen():
 
 def textid_gen():
     textid = ""
-    for _ in range(randint())
+    for _ in range(randint(5, 7)):
+        textid += TEXTABC
 
 @app.route('/')
 def main_page_load():
@@ -86,7 +90,7 @@ def text_add_application():
         return json.dumps({"is_logged_in": True, "login_page": "/static/login.html"})
     if db.Sessions.is_exists_sessions(session):
         if db.Session.is_validated_session(session):
-            title = requestdata['text']['title'] if requestdata['text']['title'] != "" else None
+            title = requestdata['text']['title'] if requestdata['text']['title'] != "" else TITLE_PLACEHOLDER
             text = requestdata['text']['text']
             js = requestdata['text']['js'] if requestdata['text']['js'] != "" else None
             
