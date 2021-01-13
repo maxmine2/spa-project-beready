@@ -1,5 +1,5 @@
-
-#*     BeReady, version nr-04
+#
+#*     BeReady, version nr-05
 #*  Copyright (C) 2021  Max Budko
 import datetime
 import json
@@ -10,10 +10,10 @@ from flask import Flask, redirect, session, url_for, request
 from werkzeug.utils import html
 
 import db
-
-MAINSETS = json.load('sets.json')
+MAINSETS = json.load(open('sets.json', 'r'))
 
 app = Flask(__name__, static_folder='static')
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 5
 
 try:
     key_f = open('key.key', 'rb')
@@ -56,11 +56,10 @@ def nosession():
 
 @app.route('/')
 def main_page_load():
-    # o = open('index.html','r')
-    # d = open.readlines()
-    # o.close()
-    # return d
-    return
+    o = open('static/index.html','r')
+    d = o.read()
+    o.close()
+    return d
 
 @app.route('/text')
 def texts():
@@ -107,7 +106,7 @@ def login_application():
             if db.Sessions.is_valid_session(session):
                 return json.dumps({'is_logged_in': True, 'app_page': '/static/app.html'})
             else:
-                if requestdata['psswrd'] == MAINSETS['password']:
+                if requestdata['psswrd'] == MAINSETS['security']['password']:
                     db.Sessions.validate(requestdata['session'])
                     return json.dumps({'is_logged_in': True, 'app_page': '/static/app.html'})
                 else:
@@ -134,7 +133,7 @@ def text_add_application():
             f = open(f'static/title_{textnames}.html', 'w+'), open(f'static/text_{textnames}.html', 'w+'), open(f'static/{textnames}.js', 'w+')
             for i, elem in range(3), [title, text, js]:
                 f[i].writelines(elem)
-                f.close()
+                f[i].close()
             del f
             db.Text.add_one(textnames, name)
             return {"status": "scs"}
@@ -142,12 +141,6 @@ def text_add_application():
             return json.dumps({'is_logged_in': False, 'login_page': '/static/login.html'})
     else:
         return json.dumps({"error": "invalid_session"})
-
-            
-            
-
-
-
 
 if __name__ == "__main__":
     app.run()

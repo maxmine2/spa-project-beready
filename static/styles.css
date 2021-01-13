@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Holtwood+One+SC&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300&display=swap');
+
+body {
+    font-family: 'Sarabun';
+    font-weight: 300;
+}
+
+h1.h1 {
+    font-family: 'Holtwood One SC', 'Impact', sans-serif;
+    font-weight: 400;
+}
+
+
+.button {
+    text-align: center;
+    background-color: #d36135;
+    border: 3px solid #00c700;
+    border-radius: 30px;
+    padding-left: 40px;
+    padding-bottom: 15px;
+    padding-top: 15px;
+    padding-right: 40px;
+    margin-left: 15px;
+    margin-right: 15px;
+
+    color: rgb(255, 255, 255);
+    font-size: 22px;
+    font-family: 'Sarabun', 'Arial', 'serif';
+}

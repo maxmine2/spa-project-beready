@@ -1,0 +1,12 @@
+{
+    "database": {
+        "host":"127.0.0.1",
+        "port": 5433,
+        "dbname": "beready",
+        "user": "beready_py3",
+        "password": "beready"
+    },
+    "security": {
+        "password":"scream_sergey_lazarev_ListenOnSpotifyForFree"
+    }
+}
