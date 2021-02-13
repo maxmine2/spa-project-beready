@@ -19,17 +19,20 @@ var page =
     jscode: document.getElementById("jscode")
 }
 
+
+
 OnLoad();
 
 function OnLoad()
 {
     var href = window.location.pathname;
+    InitializeLinks();
     LinkClick(href);
 }
 
 function InitializeLinks()
 {
-    links= document.getElementsByClassName("link-internal");
+    links=document.getElementsByClassName("link-internal");
 
     for (var i = 0; i < links.length; i++)
     {
@@ -128,7 +131,7 @@ function LoadData(param, response, link)
     if (param.substr(0, 4) == 'titl') data.title = response
     else if (param.substr(0, 4) == 'text') data.text = response
     else if (param.substr(length(param) - 4) == '.js') data.jscode = response;
-    data.link = ;
+    data.link = link;
     UpdatePage();
 }
 
@@ -141,6 +144,6 @@ function UpdatePage()
     document.title = data.title;
     window.history.pushState(data.body, data.title, data.link);
 
-    InitLinks();
+    InitializeLinks();
     
 }
