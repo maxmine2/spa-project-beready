@@ -6,7 +6,7 @@ import json
 import os
 from random import randint
 
-from flask import Flask, redirect, session, url_for, request
+from flask import Flask, redirect, url_for, request
 from werkzeug.utils import html
 
 import db
@@ -36,10 +36,12 @@ TEXTABC = {
 
 TITLE_PLACEHOLDER = ""
 
+db.launch()
+
 def session_gen():
     session = ""
     for _ in range(16):
-        session += ABC[randint(0, len(ABC))]
+        session += ABC[randint(0, len(ABC) - 1)]
     return session
 
 def textid_gen(): # * Не проверено
@@ -78,15 +80,13 @@ def text_get(id):
     names = { "title": f"/static/title_{name}.html", "text": f"/static/text_{name}.html", "js": f"/static/{name}.js"}
     return json.dumps(names, indent=4)
 
-@app.route('/app')
+@app.route('/app', methods=['POST'])
 def admin_application():
     requestdata = request.get_json()
-    requestdata = json.loads(requestdata)
     if requestdata['session'] is "-NoSession-":
         return nosession()
     else:
-        requestdata = request.get_json()
-        requestdata = json.loads(requestdata)
+        session = requestdata['session']
         if db.Sessions.is_exists_session(session):
             if db.Sessions.is_validated_session(session):
                 return json.dumps({"is_logged_in": True, "app_page": "/static/app.html"}, indent=4)
@@ -98,10 +98,10 @@ def admin_application():
 @app.route('/internal/login', methods=['POST'])
 def login_application():
     requestdata = request.get_json()
-    requestdata = json.loads(requestdata)
-    if requestdata['session'] is "-NoSession-":
+    if requestdata['session'] == "-NoSession-":
         return nosession()
     else:
+        session = requestdata['session'] 
         if db.Sessions.is_exists_session(session):
             if db.Sessions.is_valid_session(session):
                 return json.dumps({'is_logged_in': True, 'app_page': '/static/app.html'})
@@ -118,9 +118,10 @@ def login_application():
 @app.route('/internal/addtext', methods=["POST"])
 def text_add_application():
     requestdata = request.get_json()
-    requestdata = json.loads(requestdata)
+       
     if requestdata['session'] is "-NoSession-":
         return nosession()
+    session = requestdata['session']
     if db.Sessions.is_exists_sessions(session):
         if db.Session.is_validated_session(session):
             name = requestdata['text_name']
@@ -132,7 +133,7 @@ def text_add_application():
             textnames = textid_gen()
             f = open(f'static/title_{textnames}.html', 'w+'), open(f'static/text_{textnames}.html', 'w+'), open(f'static/{textnames}.js', 'w+')
             for i, elem in range(3), [title, text, js]:
-                f[i].writelines(elem)
+                f[i].writelines(eval(elem))
                 f[i].close()
             del f
             db.Text.add_one(textnames, name)
@@ -140,7 +141,7 @@ def text_add_application():
         else:
             return json.dumps({'is_logged_in': False, 'login_page': '/static/login.html'})
     else:
-        return json.dumps({"error": "invalid_session"})
+        return json.dumps({"problem": "invalid_session"})
 
 if __name__ == "__main__":
     app.run()

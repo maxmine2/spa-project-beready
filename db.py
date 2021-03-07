@@ -1,6 +1,6 @@
 import json
 import psycopg2
-import time
+from datetime import date
 import init_cmd
 
 MAINSETS = json.load(open("sets.json", 'r'))
@@ -36,27 +36,33 @@ class Texts:
         pass
 
 class Sessions:
+    def add_one(session_id: str, is_logged_in: bool) -> list:
+        cursor.execute(f"""INSERT INTO sessions (session_id, start_date, logged_in) VALUES ("{session_id}", "{date.today()}", {'t' if is_logged_in else 'f'})""")
+        pass
+
     def get_all() -> list:
         cursor.execute("""SELECT * FROM sessions""")
         return cursor.fetchall()
 
     def get_one(session: str) -> list:
-        cursor.execute("""SELECT * FROM sessions WHERE session_id = ?""", (session,))
+        cursor.execute("""SELECT * FROM sessions WHERE session_id = """+ session)
         return cursor.fetchone()
 
     def is_validated_session(session: str) -> bool:
-        cursor.execute("""SELECT logged_in FROM sessions WHERE session_id = ?""", (session,))
+        cursor.execute("""SELECT logged_in FROM sessions WHERE session_id = """ + session)
         return cursor.fetchone()[0]
 
-    def is_exists_sessions(session: str) -> bool:
-        cursor.execute("""SELECT logged_in FROM sessions WHERE session_id = ?""", (session,))
+    def is_exists_session(session: str) -> bool:
+        print(type(session))
+        cursor.execute("""SELECT logged_in FROM sessions WHERE session_id = """ + session) if session != "" and session != None else None
         return bool(len(cursor.fetchone()))
 
-    def validate_session(session: str, date) -> None:
+    def validate_session(session: str, date_) -> None:
         cursor.execute("""DELETE FROM sessions WHERE session_id = ?""", (session,))
         cmt()
-        cursor.execute("""INSERT INTO sessions VALUES (?, ?, 't')""", (session, date))
+        cursor.execute("""INSERT INTO sessions VALUES (?, ?, 't')""", (session, date.today()))
         cmt()
+        pass
     
     def del_all() -> None:
         cursor.execute("""DELETE * FROM sessions""")
