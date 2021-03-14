@@ -1,6 +1,7 @@
+const { freeze } = require("core-js/fn/object");
+
 var link = "";
 var session = '-NoSession-';
-var result = null;
 
 function LinkClick(e) {
     e.preventDefault(); // Browser don't go to this page literally
@@ -31,7 +32,7 @@ function RunLoading(props) {
 }
 
 function LoadAdminApp(props) {
-    var recieved_data = SendData(props[1], null)
+    SendData(props[1], null)
 }
 
 function uncorrectPassword() {
@@ -59,6 +60,14 @@ function SendRequest(first_param, second_param) {
         console.log(xhr.status + ": " + xhr.statusText);
     }
     xhr.send();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState != 4) return; 
+
+        if (xhr.status == 200)
+            if (first_param == 'static') LoadData(first_param, second_param, xhr.responseText)
+            else preprocessJSONData(first_param, second_param, xhr.responseText);
+            
+    };
     
 
 }
@@ -81,10 +90,10 @@ function SendData(first_param, second_param) {
         if (xhr.readyState != 4) return; 
 
         if (xhr.status == 200) 
-            result = preprocessJSONData(first_param, second_param, xhr.responseText);
+            preprocessJSONData(first_param, second_param, xhr.responseText);
             
     };
-    return result;
+    
 }   
 
 function preprocessJSONData(first_param, second_param, returnedData) {
@@ -101,9 +110,59 @@ function preprocessJSONData(first_param, second_param, returnedData) {
                 if (data['reason'] == "psswrd-incorrect") uncorrectPassword();
             }
         }
-        catch (err) {};
+        catch (err) {}
         
-        if (data["is_logged_in"] == "")
+        if (data["is_logged_in"] == false) {
+            try {
+                session = data['new_session']
+                SendData(first_param, second_param)
+            }
+            catch (err) {}
+            
+        }
         
     }
+    else if (first_param == 'internal' || second_param == 'addtext') {
+        var data = returnedData.toJSON();
+        try {
+            var problem = data["problem"]
+            if (problem == "invalid_session") {
+                session = '-NoSession-';
+                SendData(first_param, second_param)
+            }
+        }
+
+        catch (err) {}
+
+        if (data['status'] == 'scs') {
+            SendRequest('static', 'success.html')
+        }
+        
+    }
+
+    else if (first_param == 'app' || second_param == null) {
+        var data = returnedData.toJSON()
+
+        try {
+            var problem = data["problem"];
+            if (problem == "invalid_session") {
+                session = "-NoSession-";
+                SendData(first_param, second_param);
+            }
+        }
+        
+        catch (err) {}
+
+        if (data['is_logged_in'] == true) {
+            RunLoading(ParseLink(data['admin_page']))
+        }
+        
+        else if (data['is_logged_in'] == false) {
+            RunLoading(ParseLink(data['login_page']))
+        }
+    }
+}
+
+function LoadData(first_param, second_param, response) {
+    
 }

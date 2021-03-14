@@ -37,7 +37,8 @@ class Texts:
 
 class Sessions:
     def add_one(session_id: str, is_logged_in: bool) -> list:
-        cursor.execute(f"""INSERT INTO sessions (session_id, start_date, logged_in) VALUES ("{session_id}", "{date.today()}", {'t' if is_logged_in else 'f'})""")
+        cursor.execute(f"INSERT INTO sessions VALUES ('%s', '%s', '%s')" % (session_id, date.today(), 't' if is_logged_in else 'f'))
+        cmt()
         pass
 
     def get_all() -> list:
@@ -45,22 +46,23 @@ class Sessions:
         return cursor.fetchall()
 
     def get_one(session: str) -> list:
-        cursor.execute("""SELECT * FROM sessions WHERE session_id = """+ session)
+        cursor.execute(f"""SELECT * FROM sessions WHERE session_id = '{session}'""")
         return cursor.fetchone()
 
     def is_validated_session(session: str) -> bool:
-        cursor.execute("""SELECT logged_in FROM sessions WHERE session_id = """ + session)
+        cursor.execute(f"""SELECT logged_in FROM sessions WHERE session_id = '{session}' """)
         return cursor.fetchone()[0]
 
     def is_exists_session(session: str) -> bool:
         print(type(session))
-        cursor.execute("""SELECT logged_in FROM sessions WHERE session_id = """ + session) if session != "" and session != None else None
-        return bool(len(cursor.fetchone()))
+        cursor.execute(f"""SELECT logged_in FROM sessions WHERE session_id = '{session}' """) if session != "" and session != None else None
+        x = cursor.fetchone()
+        return bool(len(x) if x != None else False)
 
     def validate_session(session: str, date_) -> None:
-        cursor.execute("""DELETE FROM sessions WHERE session_id = ?""", (session,))
+        cursor.execute(f"""DELETE FROM sessions WHERE session_id = '{session}'""", (session,))
         cmt()
-        cursor.execute("""INSERT INTO sessions VALUES (?, ?, 't')""", (session, date.today()))
+        cursor.execute(f"""INSERT INTO sessions VALUES ('?', '?', 't')""", (session, date.today()))
         cmt()
         pass
     
