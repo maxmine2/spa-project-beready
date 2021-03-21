@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id='title'>BeReady</title>
-    <script src='/static/core.js'></script>
+    <script src='/static/core_v2.js'></script>
     <script id='jscode'></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Holtwood+One+SC&display=swap');
@@ -13,19 +13,22 @@
     <link type='text/css' rel='stylesheet' href='/static/styles.css'>
 </head>
 <body id='body'>
-    <header class='header'>
+    <header id='header'>
         <div class='header-container header-animation'>
             <h1 class='header-h1 header-animation'>BeReady</h1>
         </div>
     </header>
-    <main class='main'>
+    <main id='main'>
         <div class='main-container main-animation'>
             <div class='introduce-container'>
                 <p class='introduce'>The new era of education.</p>
             </div>
-            <a href='/text/3' class='link link-internal'><button class='button goto-button'>Go to texts</button></a>
-            <a href='/app' class='link link-internal'><button class='button add-button'>Add text</button></a>
+            <a href='/text' class='link link-internal'><button class='button goto-button' href='/text'>Go to texts</button></a>
+            <a href='/app' class='link link-internal'><button class='button add-button' href='/app'>Add text</button></a>
         </div>
     </main>
+    <script>
+        InitLinks();
+    </script>
 </body>
 </html>

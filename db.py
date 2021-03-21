@@ -12,10 +12,10 @@ cursor = conn.cursor()
 
 
 def cmt():
-    cursor.commit()
+    conn.commit()
 
 def rlb():
-    cursor.rollback()
+    conn.rollback()
 
 def launch():
     cursor.execute(init_cmd.texts_table)

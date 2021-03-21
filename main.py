@@ -1,6 +1,6 @@
 #
-#*     BeReady, version nr-05
-#*  Copyright (C) 2021  Max Budko
+# *     BeReady, version nr-05
+# *  Copyright (C) 2021  Max Budko
 import datetime
 import json
 import os
@@ -31,12 +31,13 @@ app.config['SECRET_KEY'] = key
 ABC = """1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM"""
 TEXTABC = {
     "vowels": "aeyuio",
-    "consonants":"dfnlkbnv"
+    "consonants": "dfnlkbnv"
 }
 
 TITLE_PLACEHOLDER = ""
 
 db.launch()
+
 
 def session_gen():
     session = ""
@@ -44,10 +45,12 @@ def session_gen():
         session += ABC[randint(0, len(ABC) - 1)]
     return session
 
-def textid_gen(): # * Не проверено
+
+def textid_gen():  # * Не проверено
     textid = ""
     for _ in range(randint(5, 7)):
-        textid += TEXTABC['consonants'][randint(0, len(TEXTABC['consonants']))] + TEXTABC['vowels'][randint(0, len(TEXTABC['vowels']))]
+        textid += TEXTABC['consonants'][randint(0, len(
+            TEXTABC['consonants']))] + TEXTABC['vowels'][randint(0, len(TEXTABC['vowels']))]
     return textid
 
 
@@ -56,34 +59,42 @@ def nosession():
     db.Sessions.add_one(session_id, False)
     return json.dumps({"is_logged_in": False, "login_page": "/static/login.html", "new_session":  session_id}, indent=4)
 
+
 @app.route('/')
 def main_page_load():
-    o = open('static/index.html','r')
+    o = open('static/index.html', 'r')
     d = o.read()
     o.close()
     return d
+
 
 @app.route('/text')
 def texts():
     all_texts = db.Texts.get_all()
     dict_data = {
-        f"text{text[0]}": {
+        "texts": [{
             "id": text[0],
             "title": text[2],
-        } for text in all_texts
+        } for text in all_texts]
     }
     return json.dumps(dict_data)
+
 
 @app.route('/text/<id>')
 def text_get(id):
     name = db.Texts.get_one(id)
-    names = { "title": f"/static/title_{name}.html", "text": f"/static/text_{name}.html", "js": f"/static/{name}.js"}
+    names = {"title": f"/static/title_{name}.html",
+             "text": f"/static/text_{name}.html", "js": f"/static/{name}.js"}
     return json.dumps(names, indent=4)
+
 
 @app.route('/app', methods=['POST'])
 def admin_application():
-    requestdata = request.get_json()
-    if requestdata['session'] is "-NoSession-":
+    reqst = request.form.get("json")
+    print(reqst)
+    requestdata = dict(eval(reqst))
+    print(requestdata)
+    if requestdata['session'] == "-NoSession-":
         return nosession()
     else:
         session = requestdata['session']
@@ -95,13 +106,14 @@ def admin_application():
         else:
             return json.dumps({"error": "invalid_session"})
 
+
 @app.route('/internal/login', methods=['POST'])
 def login_application():
-    requestdata = request.get_json()
+    requestdata = dict(eval(request.form.get("json")))
     if requestdata['session'] == "-NoSession-":
         return nosession()
     else:
-        session = requestdata['session'] 
+        session = requestdata['session']
         if db.Sessions.is_exists_session(session):
             if db.Sessions.is_valid_session(session):
                 return json.dumps({'is_logged_in': True, 'app_page': '/static/app.html'})
@@ -110,16 +122,16 @@ def login_application():
                     db.Sessions.validate(requestdata['session'])
                     return json.dumps({'is_logged_in': True, 'app_page': '/static/app.html'})
                 else:
-                    return json.dumps({'problem':'login_failed', 'reason':'psswrd-incorrect'})
+                    return json.dumps({'problem': 'login_failed', 'reason': 'psswrd-incorrect'})
         else:
-            return json.dumps({'problem':'invalid_session'})
-       
+            return json.dumps({'problem': 'invalid_session'})
+
 
 @app.route('/internal/addtext', methods=["POST"])
 def text_add_application():
-    requestdata = request.get_json()
-       
-    if requestdata['session'] is "-NoSession-":
+    requestdata = dict(eval(request.form.get("json")))
+
+    if requestdata['session'] == "-NoSession-":
         return nosession()
     session = requestdata['session']
     if db.Sessions.is_exists_sessions(session):
@@ -131,7 +143,8 @@ def text_add_application():
             # * TODO: Доделать сохранение в файл и отправку запроса на БД.
             # * Не проверено
             textnames = textid_gen()
-            f = open(f'static/title_{textnames}.html', 'w+'), open(f'static/text_{textnames}.html', 'w+'), open(f'static/{textnames}.js', 'w+')
+            f = open(f'static/title_{textnames}.html', 'w+'), open(
+                f'static/text_{textnames}.html', 'w+'), open(f'static/{textnames}.js', 'w+')
             for i, elem in range(3), [title, text, js]:
                 f[i].writelines(eval(elem))
                 f[i].close()
@@ -143,6 +156,6 @@ def text_add_application():
     else:
         return json.dumps({"problem": "invalid_session"})
 
+
 if __name__ == "__main__":
     app.run()
-    

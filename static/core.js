@@ -145,5 +145,4 @@ function UpdatePage()
     window.history.pushState(data.body, data.title, data.link);
 
     InitializeLinks();
-    
 }
