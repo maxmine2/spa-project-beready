@@ -1,6 +1,6 @@
 .vscode/
 __pycache__/
-key.key 
+key.key
 static/text_*.html
 static/title_*.html
 static/*.js

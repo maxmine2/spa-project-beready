@@ -83,8 +83,8 @@ def texts():
 @app.route('/text/<id>')
 def text_get(id):
     name = db.Texts.get_one(id)
-    names = {"title": f"/static/title_{name}.html",
-             "text": f"/static/text_{name}.html", "js": f"/static/{name}.js"}
+    names = {"title": f"/static/title_{name[1]}.html",
+             "text": f"/static/text_{name[1]}.html", "js": f"/static/{name[1]}.js"}
     return json.dumps(names, indent=4)
 
 
