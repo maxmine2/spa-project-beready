@@ -1,3 +1,11 @@
 .vscode/
 __pycache__/
-key.key
+key.key 
+static/*.html
+static/*.js
+static/!app.html
+static/!core_v2.js
+static/!admin.html
+static/!index.html
+static/!login.html
+static/!core.js

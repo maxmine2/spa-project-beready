@@ -50,7 +50,7 @@ def textid_gen():  # * Не проверено
     textid = ""
     for _ in range(randint(5, 7)):
         textid += TEXTABC['consonants'][randint(0, len(
-            TEXTABC['consonants']))] + TEXTABC['vowels'][randint(0, len(TEXTABC['vowels']))]
+            TEXTABC['consonants']) - 1)] + TEXTABC['vowels'][randint(0, len(TEXTABC['vowels']) - 1)]
     return textid
 
 
@@ -110,16 +110,17 @@ def admin_application():
 @app.route('/internal/login', methods=['POST'])
 def login_application():
     requestdata = dict(eval(request.form.get("json")))
+    print(requestdata)
     if requestdata['session'] == "-NoSession-":
         return nosession()
     else:
         session = requestdata['session']
         if db.Sessions.is_exists_session(session):
-            if db.Sessions.is_valid_session(session):
+            if db.Sessions.is_validated_session(session):
                 return json.dumps({'is_logged_in': True, 'app_page': '/static/app.html'})
             else:
                 if requestdata['psswrd'] == MAINSETS['security']['password']:
-                    db.Sessions.validate(requestdata['session'])
+                    db.Sessions.validate_session(requestdata['session'])
                     return json.dumps({'is_logged_in': True, 'app_page': '/static/app.html'})
                 else:
                     return json.dumps({'problem': 'login_failed', 'reason': 'psswrd-incorrect'})
@@ -134,8 +135,8 @@ def text_add_application():
     if requestdata['session'] == "-NoSession-":
         return nosession()
     session = requestdata['session']
-    if db.Sessions.is_exists_sessions(session):
-        if db.Session.is_validated_session(session):
+    if db.Sessions.is_exists_session(session):
+        if db.Sessions.is_validated_session(session):
             name = requestdata['text_name']
             title = requestdata['text']['title'] if requestdata['text']['title'] != "" else TITLE_PLACEHOLDER
             text = requestdata['text']['text']
@@ -143,13 +144,14 @@ def text_add_application():
             # * TODO: Доделать сохранение в файл и отправку запроса на БД.
             # * Не проверено
             textnames = textid_gen()
-            f = open(f'static/title_{textnames}.html', 'w+'), open(
-                f'static/text_{textnames}.html', 'w+'), open(f'static/{textnames}.js', 'w+')
-            for i, elem in range(3), [title, text, js]:
-                f[i].writelines(eval(elem))
-                f[i].close()
-            del f
-            db.Text.add_one(textnames, name)
+            f_title = open(f'static/title_{textnames}.html', 'w+')
+            f_text = open(f'static/text_{textnames}.html', 'w+')
+            f_js = open(f'static/{textnames}.js', 'w+')
+            print(js)
+            f_title.writelines(title)
+            f_text.writelines(text)
+            f_js.writelines(js if js != None else '')
+            db.Texts.add_one(textnames, name)
             return {"status": "scs"}
         else:
             return json.dumps({'is_logged_in': False, 'login_page': '/static/login.html'})

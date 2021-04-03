@@ -1,6 +1,6 @@
 texts_table = """\
 CREATE TABLE IF NOT EXISTS texts (
-    id          INTEGER PRIMARY KEY,
+    id          SERIAL PRIMARY KEY,
     filesname   TEXT UNIQUE NOT NULL,
     text_title  TEXT NOT NULL
 )"""
