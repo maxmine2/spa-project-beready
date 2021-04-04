@@ -13,7 +13,7 @@ import db
 MAINSETS = json.load(open('sets.json', 'r'))
 
 app = Flask(__name__, static_folder='static')
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 3600 * 24 * 7
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 5
 
 try:
     key_f = open('key.key', 'rb')

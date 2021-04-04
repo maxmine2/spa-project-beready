@@ -241,7 +241,8 @@ function LoadData(first_param, second_param, response) {
         InitLinks();
     }
     else if (first_param == 'static' && second_param.slice(-3) == '.js') {
-        document.getElementById('jscode').innerHTML = response;
+        document.getElementById('jscode').innerText = response;
+        console.log(response);
         InitLinks();
     }
     else if (first_param == 'static' && second_param.slice(0, 6) == 'title_') {
