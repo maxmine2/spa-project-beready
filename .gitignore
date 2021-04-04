@@ -7,3 +7,4 @@ static/*.js
 static/!core_v2.js
 static/!core.js
 static/sound/*
+static/fonts/*
