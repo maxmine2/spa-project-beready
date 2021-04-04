@@ -1,6 +1,6 @@
 #
-# *     BeReady, version nr-05
-# *  Copyright (C) 2021  Max Budko
+# *     BeReady, version nc-06-5
+# *  Copyright (C) 2021 Max Budko
 import datetime
 import json
 import os
@@ -147,7 +147,6 @@ def text_add_application():
             f_title = open(f'static/title_{textnames}.html', 'w+')
             f_text = open(f'static/text_{textnames}.html', 'w+')
             f_js = open(f'static/{textnames}.js', 'w+')
-            print(js)
             f_title.writelines(title)
             f_text.writelines(text)
             f_js.writelines(js if js != None else '')

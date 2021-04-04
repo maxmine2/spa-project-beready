@@ -46,7 +46,6 @@ function RunLoading(props) {
             SendData(props[0], props[1]);
             break;
         case "static": {
-            console.warn('It is not that I want.')
             SendRequest(props[0], props[1])};
             break;
     }
@@ -235,6 +234,7 @@ function preprocessJSONData(first_param, second_param, returnedData) {
 }
 
 function LoadData(first_param, second_param, response) {
+    console.log(first_param, second_param)
     if (first_param == 'text' && second_param == null) {
         document.getElementById('header').innerHTML = "<div class='header-container header-animation'>\n<h1 class='header-h1 header-animation'>All Texts</h1>\n</div>";
         document.getElementById('main').innerHTML = response;

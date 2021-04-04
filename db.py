@@ -21,7 +21,9 @@ def rlb():
 
 def launch():
     cursor.execute(init_cmd.texts_table)
+    cmt()
     cursor.execute(init_cmd.sessions_table)
+    cmt()
 
 
 class Texts:
