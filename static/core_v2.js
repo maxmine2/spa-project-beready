@@ -57,7 +57,7 @@ function LoadAdminApp(props) {
 }
 
 function uncorrectPassword() {
-    document.getElementsById('body').innerHTML = '<h2 class="psw-inc">Password is incorrect. Check again later</h2>' + document.getElementById();
+    document.getElementsById('body').innerHTML = '<h2 class="psw-inc">Password is incorrect. Try again later</h2>' + document.getElementById();
 }
 
 function LoadText(first_param, second_param) {

@@ -1,5 +1,5 @@
 #
-# *     BeReady, version nc-06-5
+# *     BeReady, version RC-1.1
 # *  Copyright (C) 2021 Max Budko
 import datetime
 import json

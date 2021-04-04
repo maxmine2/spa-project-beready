@@ -6,3 +6,4 @@ static/title_*.html
 static/*.js
 static/!core_v2.js
 static/!core.js
+static/sound/*
