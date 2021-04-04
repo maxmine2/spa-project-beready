@@ -31,15 +31,11 @@ function ParseLink(href) {
 }
 
 function RunLoading(props) {
-    console.log('geg');
     if (props.length == 0) {
         SendRequest('main', null)   
     }
-    console.log(props);
-    console.log('calling switch');
     switch (props[0]) {
         case "app": {
-            console.log('calling LoadAdminApp');
             LoadAdminApp(props);
             break;}
         case "text":
@@ -54,12 +50,10 @@ function RunLoading(props) {
             SendRequest(props[0], props[1])};
             break;
     }
-    console.warn('gjaj');
     
 }
 
 function LoadAdminApp(props) {
-    console.log('Loading through SendData()');
     SendData(props[0], null);
 }
 
@@ -97,15 +91,13 @@ function GetInfoJSON(first_param, second_param) {
             session: session,
             psswrd: document.getElementById('login-passw').value
         }
-    alert(['Info:', first_param, second_param, JSON.stringify(result)].join(' '));
+
 
     return result;
 }
 
 function SendRequest(first_param, second_param) {
     var xhr = new XMLHttpRequest()
-    console.info(first_param, second_param);
-    console.warn(second_param != null);
     if (first_param == 'text' && second_param != null) xhr.open('GET', '/' + first_param + '/' + second_param, true);
     else if (first_param == 'text' && second_param == null) xhr.open('GET', '/' + first_param, true);
     else if (first_param == 'static') xhr.open('GET', '/static/' + second_param, true);
@@ -129,7 +121,6 @@ function SendRequest(first_param, second_param) {
 
 function SendData(first_param, second_param) {
     var xhr = new XMLHttpRequest()
-    console.info(first_param, second_param)
     if (first_param == 'app' && second_param == null) xhr.open('POST','/' + first_param, true);
     else if (first_param == 'internal' && second_param == 'login') xhr.open('POST', '/' + first_param + '/' + second_param);
     else if (first_param == 'internal' && second_param == 'addtext') xhr.open('POST', '/' + first_param + '/' + second_param);
@@ -140,11 +131,9 @@ function SendData(first_param, second_param) {
 
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xhr.send('json=' + JSON.stringify(GetInfoJSON(first_param, second_param)));
-    console.log('xhr')
     
     xhr.onreadystatechange = function () {
         if (xhr.readyState != 4) return; 
-        console.log(xhr.status)
         if (xhr.status == 200){
             preprocessJSONData(first_param, second_param, xhr.responseText);
         }            
@@ -153,8 +142,6 @@ function SendData(first_param, second_param) {
 }   
 
 function preprocessJSONData(first_param, second_param, returnedData) {
-    alert('Returned data is ' + returnedData);
-    alert('Second param is ' + second_param);
     var data = JSON.parse(returnedData);
     if (first_param == 'internal' && second_param == 'login') {
         try {
@@ -179,7 +166,6 @@ function preprocessJSONData(first_param, second_param, returnedData) {
             
         }
         else if (data['is_logged_in']) {
-            console.warn(JSON.stringify(data));
             RunLoading(ParseLink(data['app_page']));
         }
         
@@ -235,15 +221,12 @@ function preprocessJSONData(first_param, second_param, returnedData) {
 
     else if (first_param == 'text') {
         var info = "<div class='texts'>\n";
-        alert(data['texts']);
         if (data["texts"] != '') 
             for (var i = 0; i < data["texts"].length; i++) {
                 var d = data["texts"][i];
-                alert("d is {d}, data is " + JSON.stringify(data))
                 info += "<div class='inline-block'>\n<a class='link link-internal' href='/text/" + d['id'] + "'>" + d["title"] + "</a>" + "</div>\n";
             }
         else {
-            console.warn('notexts');
             info += "<h4 class='notexts'>No texts here</h4>";
         }
         info += '</div>';
@@ -252,9 +235,6 @@ function preprocessJSONData(first_param, second_param, returnedData) {
 }
 
 function LoadData(first_param, second_param, response) {
-    alert(second_param);
-    console.log(response);
-    console.log(second_param);
     if (first_param == 'text' && second_param == null) {
         document.getElementById('header').innerHTML = "<div class='header-container header-animation'>\n<h1 class='header-h1 header-animation'>All Texts</h1>\n</div>";
         document.getElementById('main').innerHTML = response;
@@ -265,12 +245,10 @@ function LoadData(first_param, second_param, response) {
         InitLinks();
     }
     else if (first_param == 'static' && second_param.slice(0, 6) == 'title_') {
-        console.log('static title');
         document.getElementById('header').innerHTML = response;
         InitLinks();
     }
     else if (first_param == 'static' && second_param.slice(0, 5) == 'text_') {
-        console.log('static text')
         document.getElementById('main').innerHTML = response;
         InitLinks();
     }
